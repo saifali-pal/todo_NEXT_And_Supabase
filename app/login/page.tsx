@@ -1,3 +1,5 @@
+"use client"
+
 import LoginForm from "@/components/auth/LoginForm";
 import { Card, CardContent } from "@/components/ui/card";
 import { Suspense } from "react";
