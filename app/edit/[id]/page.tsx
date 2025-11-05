@@ -1,16 +1,32 @@
 "use client";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import EditTodoForm from "@/components/todo/EditTodoForm";
-import { useTodos } from "@/context/TodoContext";
 import { Card, CardContent } from "@/components/ui/card";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import { useTodos } from "@/app/features/todos/hooks/useTodos";
 
 export default function EditPage() {
   const { id } = useParams<{ id: string }>();
-  const { todos } = useTodos();
-  const todo = todos.find((t) => t.id == id);
+  const { data: todos, isLoading, error } = useTodos();
 
-  console.log(todo);
+  const todo = todos?.find((t) => String(t.id) === String(id));
+  console.log(todos);
+
+  if (isLoading) {
+    return (
+      <ProtectedRoute>
+        <p className="text-center mt-10">Loading...</p>
+      </ProtectedRoute>
+    );
+  }
+
+  if (error) {
+    return (
+      <ProtectedRoute>
+        <p className="text-center mt-10 text-red-500">Error loading task.</p>
+      </ProtectedRoute>
+    );
+  }
 
   return (
     <ProtectedRoute>
@@ -27,3 +43,6 @@ export default function EditPage() {
     </ProtectedRoute>
   );
 }
+
+
+

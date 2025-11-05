@@ -1,19 +1,32 @@
 "use client";
-import { useTodos } from "@/context/TodoContext";
+import {
+  useDeleteTodo,
+  useToggleTodo,
+} from "@/app/features/todos/hooks/useTodos";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Todo } from "@/types/todo";
 
 export default function TodoCard({ todo }: { todo: Todo }) {
-  const { deleteTodo, toggleTodo } = useTodos();
+  const deleteTodoMutation = useDeleteTodo();
+  const toggleTodoMutation = useToggleTodo();
+
+  const handleToggle = () => {
+    toggleTodoMutation.mutate({ id: todo.id, completed: !todo.completed });
+  };
+
+  const handleDelete = () => {
+    deleteTodoMutation.mutate(todo.id);
+  };
 
   return (
     <div className="flex justify-between items-center p-3 border rounded-lg shadow-sm bg-white">
       <div className="flex items-center gap-2 flex-1 min-w-0">
         <Checkbox
           checked={todo.completed}
-          onCheckedChange={() => toggleTodo(todo.id)}
+          onCheckedChange={handleToggle}
+          disabled={toggleTodoMutation.isPending}
         />
         <span
           className={`${
@@ -32,11 +45,10 @@ export default function TodoCard({ todo }: { todo: Todo }) {
         <Button
           size="sm"
           variant="destructive"
-          onClick={() => {
-            deleteTodo(todo.id);
-          }}
+          onClick={handleDelete}
+          disabled={deleteTodoMutation.isPending}
         >
-          Delete
+          {deleteTodoMutation.isPending ? "..." : "Delete"}
         </Button>
       </div>
     </div>

@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { usePathname, useRouter } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
 import { useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/context/AuthContext";
+import { usePathname, useRouter } from "next/navigation";
+
 export default function Navigation() {
   const pathname = usePathname();
   const router = useRouter();

@@ -34,7 +34,7 @@ export const TodoProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [user]);
 
-  // 📦 Fetch Todos
+
   const fetchTodos = async () => {
     if (!user?.id) return;
 
@@ -51,7 +51,7 @@ export const TodoProvider = ({ children }: { children: React.ReactNode }) => {
     setLoading(false);
   };
 
-  // ➕ Add Todo
+
   const addTodo = async (text: string) => {
     if (!user?.id) return;
 
@@ -61,7 +61,7 @@ export const TodoProvider = ({ children }: { children: React.ReactNode }) => {
       user_id: user.id,
     };
 
-    // ✅ insert expects an array
+    
     const { data, error } = await supabase
       .from("todos")
       .insert([newTodo])
@@ -72,7 +72,7 @@ export const TodoProvider = ({ children }: { children: React.ReactNode }) => {
     else if (data) setTodos((prev) => [data, ...prev]);
   };
 
-  // ✏️ Update Todo
+
   const updateTodo = async (id: string, text: string) => {
     if (!user?.id) return;
 
@@ -92,7 +92,7 @@ export const TodoProvider = ({ children }: { children: React.ReactNode }) => {
       setTodos((prev) => prev.map((t) => (t.id === id ? { ...t, text } : t)));
   };
 
-  // 🗑️ Delete Todo
+
   const deleteTodo = async (id: string) => {
     if (!user?.id) return;
 
@@ -106,7 +106,7 @@ export const TodoProvider = ({ children }: { children: React.ReactNode }) => {
     else setTodos((prev) => prev.filter((t) => t.id !== id));
   };
 
-  // ✅ Toggle Todo
+
   const toggleTodo = async (id: string) => {
     if (!user?.id) return;
 
@@ -120,7 +120,7 @@ export const TodoProvider = ({ children }: { children: React.ReactNode }) => {
 
     const { error } = await supabase
       .from("todos")
-      .update(updates) // ✅ FIXED: previously commented out
+      .update(updates) 
       .eq("id", id)
       .eq("user_id", user.id);
 
@@ -148,3 +148,6 @@ export const useTodos = () => {
   if (!context) throw new Error("useTodos must be used within a TodoProvider");
   return context;
 };
+
+
+//todo context becomes unecassary with React Query

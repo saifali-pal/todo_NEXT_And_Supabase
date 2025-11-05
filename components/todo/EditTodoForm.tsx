@@ -2,7 +2,7 @@
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { todoSchema } from "@/lib/validation";
-import { useTodos } from "@/context/TodoContext";
+import { useUpdateTodo } from "@/app/features/todos/hooks/useTodos";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Todo } from "@/types/todo";
@@ -16,7 +16,7 @@ interface FormData {
 }
 
 export default function EditTodoForm({ todo }: Props) {
-  const { updateTodo } = useTodos();
+  const updateTodoMutation = useUpdateTodo();
   const router = useRouter();
 
   const {
@@ -28,19 +28,33 @@ export default function EditTodoForm({ todo }: Props) {
     defaultValues: { text: todo.text },
   });
 
-  const onSubmit = (data: FormData) => {
-    updateTodo(todo.id, data.text);
-    router.push("/");
+  const onSubmit = async (data: FormData) => {
+    try {
+      await updateTodoMutation.mutateAsync({ id: todo.id, text: data.text });
+      router.push("/");
+    } catch (error) {
+      // Error is already handled in the mutation
+      console.error("Failed to update todo:", error);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
-      <Input {...register("text")} />
+      <Input {...register("text")} disabled={updateTodoMutation.isPending} />
       {errors.text && (
         <p className="text-red-500 text-sm">{errors.text.message}</p>
       )}
-      <Button type="submit" className="mt-2 w-full">
-        Update Task
+      {updateTodoMutation.error && (
+        <p className="text-red-500 text-sm">
+          Failed to update task. Please try again.
+        </p>
+      )}
+      <Button
+        type="submit"
+        className="mt-2 w-full"
+        disabled={updateTodoMutation.isPending}
+      >
+        {updateTodoMutation.isPending ? "Updating..." : "Update Task"}
       </Button>
     </form>
   );
